@@ -74,103 +74,217 @@ class user(AbstractUser):
 
 
 
-class WorkOrderHeader(models.Model):
-    work_order_no = models.CharField(max_length=255)
-    customer = models.CharField(max_length=255)
-    job_name = models.CharField(max_length=255)
-    sleeve_size = models.CharField(max_length=255)
-    target = models.CharField(max_length=255)
-    produced = models.CharField(max_length=255)
-    balance = models.CharField(max_length=255)
-    operator_name = models.CharField(max_length=255)
-    assistant_name = models.CharField(max_length=255)
-    date = models.CharField(max_length=255)
-    mc_name = models.CharField(max_length=255)
-    shift = models.CharField(max_length=255)
-    mc_speed = models.CharField(max_length=255)
-    production_weight = models.CharField(max_length=255)
-    dyan_level = models.CharField(max_length=255)
+
+# class ProductionDetail(models.Model):
+#     printedRollNo = models.CharField(max_length=255, db_column='printedRollNo')
+#     printingOpName = models.CharField(max_length=255, db_column='printingOpName')
+#     printedInputRollKgs = models.CharField(max_length=255, db_column='printedInputRollKgs')
+#     supName = models.CharField(max_length=255, db_column='supName')
+#     supRollNo = models.CharField(max_length=255, db_column='supRollNo')
+#     netWt = models.CharField(max_length=255, db_column='netWt')
+#     outputRollNo = models.CharField(max_length=255, db_column='outputRollNo')
+#     outputRollWtKgs = models.CharField(max_length=255, db_column='outputRollWtKgs')
+#     outputRollMtrs = models.CharField(max_length=255, db_column='outputRollMtrs')
+#     startingTime = models.CharField(max_length=255, db_column='startingTime')
+#     endTime = models.CharField(max_length=255, db_column='endTime')
+#     adhGsm = models.CharField(max_length=255, db_column='adhGsm')
+
+
+# class NcoAndOh(models.Model):
+#    supplier = models.CharField(max_length=255, db_column='supplier')
+#    grade = models.CharField(max_length=255, db_column='grade')
+#    bathNo = models.CharField(max_length=255, db_column='bathNo')
+
+
+# class RawMaterial(models.Model):
+
+#     details = models.CharField(max_length=255)
+#     nco = models.OneToOneField(NcoAndOh, on_delete=models.CASCADE,related_name='raw_material_nco')
+#     oh = models.OneToOneField(NcoAndOh, on_delete=models.CASCADE,related_name='raw_material_oh')
+
+
+
+
+# class MaterialDetail(models.Model):
+    
+#     slNo = models.CharField(max_length=255, db_column='slNo', null=True)
+#     rawMaterial = models.OneToOneField(RawMaterial, on_delete=models.CASCADE)
+#     size = models.CharField(max_length=255)
+#     mc = models.CharField(max_length=255)
+#     input = models.CharField(max_length=255)
+#     returnMaterial = models.CharField(max_length=255, db_column='returnMaterial') 
+#     used = models.CharField(max_length=255)
+#     lineClearance = models.CharField(max_length=255, db_column='lineClearance')
+#     supplier = models.CharField(max_length=255)
+#     grade = models.CharField(max_length=255)
+#     bathNo = models.CharField(max_length=255, db_column='bathNo')
+#     ratio = models.CharField(max_length=255, blank=True)
+#     inputQty = models.CharField(max_length=255, blank=True, db_column='inputQty')
+
+
+# class ScrapDetail(models.Model):
+    
+#     plainPEWastage = models.CharField(max_length=255, db_column='plainPEWastage')
+#     printedWastage = models.CharField(max_length=255, db_column='printedWastage')
+#     packingWaste = models.CharField(max_length=255, db_column='packingWaste')
+#     laminationWaste = models.CharField(max_length=255, db_column='laminationWaste')
+#     total = models.CharField(max_length=255)
+
+
+# class MachineParameter(models.Model):
+   
+#     unwinder1 = models.CharField(max_length=255)
+#     unwinder2 = models.CharField(max_length=255)
+#     rewinder = models.CharField(max_length=255)
+#     coatingTemp = models.CharField(max_length=255, db_column='coatingTemp')
+#     nipTemp = models.CharField(max_length=255, db_column='nipTemp')
+#     ncoTemp = models.CharField(max_length=255, db_column='ncoTemp')
+#     ohTemp = models.CharField(max_length=255, db_column='ohTemp')
+#     coaterCurrent = models.CharField(max_length=255, blank=True, db_column='coaterCurrent')
+#     nipPressure = models.CharField(max_length=255, db_column='nipPressure')
+
+
+# class LineClearance(models.Model):
+
+#     solvent = models.BooleanField(default=False)
+#     cylinder = models.BooleanField(default=False)
+#     rubberRoller = models.BooleanField(default=False, db_column='rubberRoller')
+#     drBlade = models.BooleanField(default=False, db_column='drBlade')
+#     rawMaterial = models.BooleanField(default=False, db_column='rawMaterial')
+#     mcSurroundings = models.BooleanField(default=False, db_column='mcSurroundings')
+#     wasteMatl = models.BooleanField(default=False, db_column='wasteMatl')
+#     printedMatl = models.BooleanField(default=False, db_column='printedMatl')
+
+
+# class PolyWastageDetail(models.Model):
+    
+#     damage = models.CharField(max_length=255)
+#     wrinkle = models.CharField(max_length=255)
+#     coreEnd = models.CharField(max_length=255, db_column='coreEnd')
+
+# class WorkOrderHeader(models.Model):
+    
+#     customer = models.CharField(max_length=255)
+#     jobName = models.CharField(max_length=255, db_column='jobName')
+#     sleeveSize = models.CharField(max_length=255, db_column='sleeveSize')
+#     target = models.CharField(max_length=255)
+#     produced = models.CharField(max_length=255)
+#     balance = models.CharField(max_length=255)
+#     operatorName = models.CharField(max_length=255, db_column='operatorName')
+#     assistantName = models.CharField(max_length=255, db_column='assistantName')
+#     date = models.CharField(max_length=255)
+#     mcName = models.CharField(max_length=255, db_column='mcName')
+#     shift = models.CharField(max_length=255)
+#     mcSpeed = models.CharField(max_length=255, db_column='mcSpeed')
+#     productionWeight = models.CharField(max_length=255, db_column='productionWeight')
+#     dyanLevel = models.CharField(max_length=255, db_column='dyanLevel')
+#     ProductionDetails = models.ManyToManyField(ProductionDetail)
+#     materialDetails = models.ManyToManyField(MaterialDetail)
+#     scrapDetails = models.OneToOneField(ScrapDetail, on_delete=models.CASCADE)
+#     machineParameters = models.OneToOneField(MachineParameter, on_delete=models.CASCADE)
+#     lineClearance = models.OneToOneField(LineClearance, on_delete=models.CASCADE)
+#     polyWastageDetails = models.OneToOneField(PolyWastageDetail, on_delete=models.CASCADE)
 
 
 class ProductionDetail(models.Model):
-    work_order_header = models.ForeignKey(WorkOrderHeader, related_name='production_details', on_delete=models.CASCADE)
-    printed_roll_no = models.CharField(max_length=255)
-    printing_op_name = models.CharField(max_length=255)
-    printed_input_roll_kgs = models.CharField(max_length=255)
-    sup_name = models.CharField(max_length=255)
-    sup_roll_no = models.CharField(max_length=255)
-    net_wt = models.CharField(max_length=255)
-    output_roll_no = models.CharField(max_length=255)
-    output_roll_wt_kgs = models.CharField(max_length=255)
-    output_roll_mtrs = models.CharField(max_length=255)
-    starting_time = models.CharField(max_length=255)
-    end_time = models.CharField(max_length=255)
-    adh_gsm = models.CharField(max_length=255)
-
-
+    printedRollNo = models.CharField(max_length=255, db_column='printedRollNo', null=True)
+    printingOpName = models.CharField(max_length=255, db_column='printingOpName', null=True)
+    printedInputRollKgs = models.CharField(max_length=255, db_column='printedInputRollKgs', null=True)
+    supName = models.CharField(max_length=255, db_column='supName', null=True)
+    supRollNo = models.CharField(max_length=255, db_column='supRollNo', null=True)
+    netWt = models.CharField(max_length=255, db_column='netWt', null=True)
+    outputRollNo = models.CharField(max_length=255, db_column='outputRollNo', null=True)
+    outputRollWtKgs = models.CharField(max_length=255, db_column='outputRollWtKgs', null=True)
+    outputRollMtrs = models.CharField(max_length=255, db_column='outputRollMtrs', null=True)
+    startingTime = models.CharField(max_length=255, db_column='startingTime', null=True)
+    endTime = models.CharField(max_length=255, db_column='endTime', null=True)
+    adhGsm = models.CharField(max_length=255, db_column='adhGsm', null=True)
+ 
+ 
+class NcoAndOh(models.Model):
+   supplier = models.CharField(max_length=255, db_column='supplier', null=True)
+   grade = models.CharField(max_length=255, db_column='grade', null=True)
+   bathNo = models.CharField(max_length=255, db_column='bathNo', null=True)
+ 
+ 
 class RawMaterial(models.Model):
-    details = models.CharField(max_length=255)
-    nco_supplier = models.CharField(max_length=255)
-    nco_grade = models.CharField(max_length=255)
-    nco_bath_no = models.CharField(max_length=255)
-    oh_supplier = models.CharField(max_length=255)
-    oh_grade = models.CharField(max_length=255)
-    oh_bath_no = models.CharField(max_length=255)
-
-
+    details = models.CharField(max_length=255, null=True)
+    nco = models.OneToOneField(NcoAndOh, on_delete=models.CASCADE, related_name='raw_material_nco', null=True)
+    oh = models.OneToOneField(NcoAndOh, on_delete=models.CASCADE, related_name='raw_material_oh', null=True)
+ 
+ 
 class MaterialDetail(models.Model):
-    work_order_header = models.ForeignKey(WorkOrderHeader, related_name='material_details', on_delete=models.CASCADE)
-    sl_no = models.CharField(max_length=255)
-    raw_material = models.OneToOneField(RawMaterial, on_delete=models.CASCADE)
-    size = models.CharField(max_length=255)
-    mc = models.CharField(max_length=255)
-    input = models.CharField(max_length=255)
-    return_material = models.CharField(max_length=255)
-    used = models.CharField(max_length=255)
-    line_clearance = models.CharField(max_length=255)
-    supplier = models.CharField(max_length=255)
-    grade = models.CharField(max_length=255)
-    bath_no = models.CharField(max_length=255)
-    ratio = models.CharField(max_length=255, blank=True)
-    input_qty = models.CharField(max_length=255, blank=True)
-
-
+    slNo = models.CharField(max_length=255, db_column='slNo', null=True)
+    rawMaterial = models.OneToOneField(RawMaterial, on_delete=models.CASCADE, null=True)
+    size = models.CharField(max_length=255, null=True)
+    mc = models.CharField(max_length=255, null=True)
+    input = models.CharField(max_length=255, null=True)
+    returnMaterial = models.CharField(max_length=255, db_column='return', null=True)  # Changed from 'return' to 'returnMaterial'
+    used = models.CharField(max_length=255, null=True)
+    lineClearance = models.CharField(max_length=255, db_column='lineClearance', null=True)
+    supplier = models.CharField(max_length=255, null=True)
+    grade = models.CharField(max_length=255, null=True)
+    bathNo = models.CharField(max_length=255, null=True)
+    ratio = models.CharField(max_length=255, blank=True, null=True)
+    inputQty = models.CharField(max_length=255, blank=True, db_column='inputQty', null=True)
+ 
+ 
 class ScrapDetail(models.Model):
-    work_order_header = models.OneToOneField(WorkOrderHeader, related_name='scrap_details', on_delete=models.CASCADE)
-    plain_pe_wastage = models.CharField(max_length=255)
-    printed_wastage = models.CharField(max_length=255)
-    packing_waste = models.CharField(max_length=255)
-    lamination_waste = models.CharField(max_length=255)
-    total = models.CharField(max_length=255)
-
-
+    plainPEWastage = models.CharField(max_length=255, db_column='plainPEWastage', null=True)
+    printedWastage = models.CharField(max_length=255, db_column='printedWastage', null=True)
+    packingWaste = models.CharField(max_length=255, db_column='packingWaste', null=True)
+    laminationWaste = models.CharField(max_length=255, db_column='laminationWaste', null=True)
+    total = models.CharField(max_length=255, null=True)
+ 
+ 
 class MachineParameter(models.Model):
-    work_order_header = models.OneToOneField(WorkOrderHeader, related_name='machine_parameters', on_delete=models.CASCADE)
-    unwinder1 = models.CharField(max_length=255)
-    unwinder2 = models.CharField(max_length=255)
-    rewinder = models.CharField(max_length=255)
-    coating_temp = models.CharField(max_length=255)
-    nip_temp = models.CharField(max_length=255)
-    nco_temp = models.CharField(max_length=255)
-    oh_temp = models.CharField(max_length=255)
-    coater_current = models.CharField(max_length=255, blank=True)
-    nip_pressure = models.CharField(max_length=255)
-
-
+    unwinder1 = models.CharField(max_length=255, null=True)
+    unwinder2 = models.CharField(max_length=255, null=True)
+    rewinder = models.CharField(max_length=255, null=True)
+    coatingTemp = models.CharField(max_length=255, db_column='coatingTemp', null=True)
+    nipTemp = models.CharField(max_length=255, db_column='nipTemp', null=True)
+    ncoTemp = models.CharField(max_length=255, db_column='ncoTemp', null=True)
+    ohTemp = models.CharField(max_length=255, db_column='ohTemp', null=True)
+    coaterCurrent = models.CharField(max_length=255, blank=True, db_column='coaterCurrent', null=True)
+    nipPressure = models.CharField(max_length=255, db_column='nipPressure', null=True)
+ 
+ 
 class LineClearance(models.Model):
-    work_order_header = models.OneToOneField(WorkOrderHeader, related_name='line_clearance', on_delete=models.CASCADE)
-    solvent = models.BooleanField(default=False)
-    cylinder = models.BooleanField(default=False)
-    rubber_roller = models.BooleanField(default=False)
-    dr_blade = models.BooleanField(default=False)
-    raw_material = models.BooleanField(default=False)
-    mc_surroundings = models.BooleanField(default=False)
-    waste_matl = models.BooleanField(default=False)
-    printed_matl = models.BooleanField(default=False)
-
-
+    solvent = models.BooleanField(default=False, null=True)
+    cylinder = models.BooleanField(default=False, null=True)
+    rubberRoller = models.BooleanField(default=False, db_column='rubberRoller', null=True)
+    drBlade = models.BooleanField(default=False, db_column='drBlade', null=True)
+    rawMaterial = models.BooleanField(default=False, db_column='rawMaterial', null=True)
+    mcSurroundings = models.BooleanField(default=False, db_column='mcSurroundings', null=True)
+    wasteMatl = models.BooleanField(default=False, db_column='wasteMatl', null=True)
+    printedMatl = models.BooleanField(default=False, db_column='printedMatl', null=True)
+ 
+ 
 class PolyWastageDetail(models.Model):
-    work_order_header = models.OneToOneField(WorkOrderHeader, related_name='poly_wastage_details', on_delete=models.CASCADE)
-    damage = models.CharField(max_length=255)
-    wrinkle = models.CharField(max_length=255)
-    core_end = models.CharField(max_length=255)
+    damage = models.CharField(max_length=255, null=True)
+    wrinkle = models.CharField(max_length=255, null=True)
+    coreEnd = models.CharField(max_length=255, db_column='coreEnd', null=True)
+ 
+ 
+class WorkOrderHeader(models.Model):
+    workOrderNo = models.CharField(max_length=255, null=True)
+    customer = models.CharField(max_length=255, null=True)
+    jobName = models.CharField(max_length=255, db_column='jobName', null=True)
+    sleeveSize = models.CharField(max_length=255, db_column='sleeveSize', null=True)
+    target = models.CharField(max_length=255, null=True)
+    produced = models.CharField(max_length=255, null=True)
+    balance = models.CharField(max_length=255, null=True)
+    operatorName = models.CharField(max_length=255, db_column='operatorName', null=True)
+    assistantName = models.CharField(max_length=255, db_column='assistantName', null=True)
+    date = models.CharField(max_length=255, null=True)
+    mcName = models.CharField(max_length=255, db_column='mcName', null=True)
+    shift = models.CharField(max_length=255, null=True)
+    mcSpeed = models.CharField(max_length=255, null=True)
+    productionWeight = models.CharField(max_length=255, null=True)
+    dyanLevel = models.CharField(max_length=255, null=True)
+    ProductionDetails = models.ManyToManyField(ProductionDetail, null=True)
+    materialDetails = models.ManyToManyField(MaterialDetail, null=True)
+    scrapDetails = models.OneToOneField(ScrapDetail, on_delete=models.CASCADE, null=True)
+    machineParameters = models.OneToOneField(MachineParameter, on_delete=models.CASCADE, null=True)
+    lineClearance = models.OneToOneField(LineClearance, on_delete=models.CASCADE, null=True)
+    polyWastageDetails = models.OneToOneField(PolyWastageDetail, on_delete=models.CASCADE, null=True)

@@ -81,7 +81,7 @@ WSGI_APPLICATION = 'tabapp.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'NAME': 'RPL',
+        'NAME': 'RPL3',
         'USER': 'focusr',
         'PASSWORD':'focusdbadmin',
         'HOST': '172.232.122.90',
