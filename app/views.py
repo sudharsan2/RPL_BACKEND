@@ -11,6 +11,9 @@ from .models import user
 from .serializer import ProductionDetailSerializer
 
 
+
+
+
 class RegistrationView(generics.GenericAPIView):
     serializer_class = RegisterSerializer
 
@@ -372,6 +375,7 @@ class WorkOrderDetailAPIView(APIView):
             context['cheating_oh'] = context['materialDetails'][0]
             print(context['cheating_oh'])
 
+            
               
             template = loader.get_template('app/job_card.html')  
             html = template.render(context, request)
@@ -389,3 +393,195 @@ class workOrderHeadersList(APIView):
         serializer = WorkOrderHeaderSerializer(instance, many= True)
 
         return Response(serializer.data, status=status.HTTP_200_OK)
+    
+
+
+
+
+import pdfkit
+from django.http import HttpResponse
+from django.template import loader
+from rest_framework.views import APIView
+from .models import WorkOrderHeader, ProductionDetail, MaterialDetail
+
+class WorkOrderDetailPdfAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        work_order_id = kwargs.get('id')
+        
+        try:
+            work_order = WorkOrderHeader.objects.get(id=work_order_id)
+            
+            # Prepare ProductionDetails
+            production_details = ProductionDetail.objects.filter(workorderheader=work_order)
+            production_details_data = [{
+                'printedRollNo': pd.printedRollNo,
+                'printingOpName': pd.printingOpName,
+                'printedInputRollKgs': pd.printedInputRollKgs,
+                'supName': pd.supName,
+                'supRollNo': pd.supRollNo,
+                'netWt': pd.netWt,
+                'outputRollNo': pd.outputRollNo,
+                'outputRollWtKgs': pd.outputRollWtKgs,
+                'outputRollMtrs': pd.outputRollMtrs,
+                'startingTime': pd.startingTime,
+                'endTime': pd.endTime,
+                'adhGsm': pd.adhGsm
+            } for pd in production_details]
+            
+            # Prepare MaterialDetails
+            material_details = MaterialDetail.objects.filter(workorderheader=work_order)
+            material_details_data = []
+            for md in material_details:
+                raw_material = md.rawMaterial
+                nco = raw_material.nco
+                oh = raw_material.oh
+                material_details_data.append({
+                    'slNo': md.slNo,
+                    'rawMaterial': {
+                        'details': raw_material.details,
+                        'nco': {
+                            'supplier': nco.supplier,
+                            'grade': nco.grade,
+                            'bathNo': nco.bathNo
+                        },
+                        'oh': {
+                            'supplier': oh.supplier,
+                            'grade': oh.grade,
+                            'bathNo': oh.bathNo
+                        }
+                    },
+                    'size': md.size,
+                    'mc': md.mc,
+                    'input': md.input,
+                    'return': md.returnMaterial,
+                    'used': md.used,
+                    'lineClearance': md.lineClearance,
+                    'supplier': md.supplier,
+                    'grade': md.grade,
+                    'bathNo': md.bathNo,
+                    'ratio': md.ratio,
+                    'inputQty': md.inputQty
+                })
+            
+            # Prepare ScrapDetail
+            scrap_detail = work_order.scrapDetails
+            scrap_data = {
+                'plainPEWastage': scrap_detail.plainPEWastage,
+                'printedWastage': scrap_detail.printedWastage,
+                'packingWaste': scrap_detail.packingWaste,
+                'laminationWaste': scrap_detail.laminationWaste,
+                'total': scrap_detail.total
+            }
+
+            # Prepare breakDownDetail
+            breakdown_detail = work_order.breakDownDetail
+            breakdown_data = {
+                'sleeveChange': breakdown_detail.sleeveChange,
+                'cleaning': breakdown_detail.cleaning,
+                'totalProdnMin': breakdown_detail.totalProdnMin,
+                'jobSettingMin': breakdown_detail.jobSettingMin,
+                'rollChangeMin': breakdown_detail.rollChangeMin,
+                'noPlanning': breakdown_detail.noPlanning,
+                'breakDownMin': breakdown_detail.breakDownMin,
+                'powerCut': breakdown_detail.powerCut,
+                'tagRemove': breakdown_detail.tagRemove,
+                'total': breakdown_detail.total,
+            }
+            
+            # Prepare MachineParameter
+            machine_parameter = work_order.machineParameters
+            machine_data = {
+                'unwinder1': machine_parameter.unwinder1,
+                'unwinder2': machine_parameter.unwinder2,
+                'rewinder': machine_parameter.rewinder,
+                'coatingTemp': machine_parameter.coatingTemp,
+                'nipTemp': machine_parameter.nipTemp,
+                'lc1': machine_parameter.lc1,
+                'ncoTemp': machine_parameter.ncoTemp,
+                'ohTemp': machine_parameter.ohTemp,
+                'coaterCurrent': machine_parameter.coaterCurrent,
+                'nipPressure': machine_parameter.nipPressure
+            }
+            
+            # Prepare LineClearance
+            line_clearance = work_order.lineClearance
+            line_clearance_data = {
+                'solvent': line_clearance.solvent,
+                'cylinder': line_clearance.cylinder,
+                'rubberRoller': line_clearance.rubberRoller,
+                'drBlade': line_clearance.drBlade,
+                'rawMaterial': line_clearance.rawMaterial,
+                'mcSurroundings': line_clearance.mcSurroundings,
+                'wasteMatl': line_clearance.wasteMatl,
+                'printedMatl': line_clearance.printedMatl
+            }
+            
+            # Prepare PolyWastageDetail
+            poly_wastage_detail = work_order.polyWastageDetails
+            poly_wastage_data = {
+                'damage': poly_wastage_detail.damage,
+                'wrinkle': poly_wastage_detail.wrinkle,
+                'coreEnd': poly_wastage_detail.coreEnd
+            }
+            
+            # Prepare WorkOrderHeader response
+            context = {
+                'workOrderNo': work_order.workOrderNo,
+                'customer': work_order.customer,
+                'jobName': work_order.jobName,
+                'sleeveSize': work_order.sleeveSize,
+                'target': work_order.target,
+                'produced': work_order.produced,
+                'balance': work_order.balance,
+                'operatorName': work_order.operatorName,
+                'assistantName': work_order.assistantName,
+                'date': work_order.date,
+                'mcName': work_order.mcName,
+                'shift': work_order.shift,
+                'MCspeed': work_order.mcSpeed,
+                'productionWeight': work_order.productionWeight,
+                'dyanLevel': work_order.dyanLevel,
+                'productionDetails': production_details_data,
+                'materialDetails': material_details_data,
+                'scrapDetails': scrap_data,
+                'machineParameters': machine_data,
+                'lineClearance': line_clearance_data,
+                'polyWastageDetails': poly_wastage_data
+            }
+            
+            # Prepare additional row logic for rendering in template
+            production_count = len(context['productionDetails'])
+            additional_rows = max(9 - production_count, 0)
+            context['additional_rows'] = [i for i in range(additional_rows)]
+
+            material_count = len(context['materialDetails'])
+            additional_rows_material = max(4 - material_count, 0)
+            context['material_Details_count'] = material_count
+            context['additional_rows_material'] = [i for i in range(additional_rows_material)]
+
+            additional_rows_raw = max(5 - material_count, 0)
+            context['additional_rows_raw'] = [i for i in range(additional_rows_raw)]
+            context['cheating_oh'] = context['materialDetails'][0]
+
+            # Render the template to HTML
+            template = loader.get_template('app/job_card.html')  
+            html_content = template.render(context, request)
+            
+            # Convert HTML to PDF using pdfkit
+            # Set path for wkhtmltopdf
+            # path_to_wkhtmltopdf = '/usr/local/bin/wkhtmltopdf'  
+            # config = pdfkit.configuration(wkhtmltopdf=path_to_wkhtmltopdf)
+
+            # Generate the PDF
+            # pdf = pdfkit.from_string(html_content, False, configuration=config)
+            pdf = pdfkit.from_string(html_content, False)  # False makes it return PDF as a binary instead of saving it
+            
+            # Send PDF as response
+            response = HttpResponse(pdf, content_type='application/pdf')
+            response['Content-Disposition'] = f'attachment; filename="work_order_{work_order_id}.pdf"'
+            return response
+        
+        except WorkOrderHeader.DoesNotExist:
+            return HttpResponse('<h1>WorkOrder not found</h1>', status=404)
+        except Exception as e:
+            return HttpResponse(f'<h1>Error: {str(e)}</h1>', status=400)

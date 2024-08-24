@@ -1,5 +1,5 @@
 from django.urls import path,include
-from .views import LoginView, RegistrationView,CreateWorkOrderAPIView,WorkOrderDetailAPIView,workOrderHeadersList
+from .views import LoginView, RegistrationView,CreateWorkOrderAPIView,WorkOrderDetailAPIView,workOrderHeadersList,WorkOrderDetailPdfAPIView
 
 urlpatterns = [
     path('register/', RegistrationView.as_view(), name='register'),
@@ -7,6 +7,7 @@ urlpatterns = [
     path('formsubmit/', CreateWorkOrderAPIView.as_view(), name='WorkOrderCreateView'),
     path('formsubmit/<int:id>', WorkOrderDetailAPIView.as_view(), name='WorkOrderCreateView'),
     path('formslist', workOrderHeadersList.as_view(), name='workOrderHeadersList'),
+    path('downloadreport/<int:id>', WorkOrderDetailPdfAPIView.as_view())
     
 
     # path('submitForm/', submitForm.as_view(), ),
