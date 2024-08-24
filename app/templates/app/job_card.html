@@ -1,0 +1,658 @@
+<!DOCTYPE html>
+<html lang="en">
+ 
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Lamination Job Card</title>
+<style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffc0cb;
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+ 
+        table {
+            width: 100vw;
+            height: 60vh;
+            border-collapse: collapse;
+            background-color: #ffc0cb;
+            font-size: 12px;
+        }
+ 
+        th,
+        td {
+            border: 1px solid black;
+            padding: 5px;
+            text-align: center;
+        }
+ 
+        th {
+            background-color: #e57373;
+            color: white;
+        }
+ 
+        .header {
+            font-weight: bold;
+            background-color: #e57373;
+            color: white;
+        }
+ 
+        .section-title {
+            background-color: #e57373;
+            color: white;
+            text-align: left;
+        }
+</style>
+</head>
+ 
+<body>
+<table id="myTable">
+<tr>
+<td colspan="12" class="header" style="width: 80%;">RATHNA PACKAGING INDIA (P) LIMITED, UNIT-I, HOSUR</td>
+<td colspan="4" rowspan="2" class="header" style="width: 20%;">SL NO.:</td>
+</tr>
+<tr>
+<td colspan="10" class="header">LAMINATION JOB CARD (SOLVENT LESS)</td>
+<td colspan="2" style="text-align: right;" class="header">REV / NO.: </td>
+</tr>
+<tr>
+<td colspan="4" style="text-align: left;">WORK ORDER NO: <b>{{workOrderNo}}</b></td>
+<td colspan="4" style="text-align: left;">TARGET: <b>{{ target }}</b></td>
+<td colspan="4" style="text-align: left;">OPERATOR NAME: <b>{{ operatorName }}</b></td>
+<td colspan="4" style="text-align: left;">DATE: <b>{{ date }}</b></td>
+</tr>
+<tr>
+<td colspan="4" style="text-align: left;">CUSTOMER: <b>{{customer}}</b></td>
+<td colspan="8" style="text-align: left;">PRODUCED: <b>{{produced}}</b></td>
+<td colspan="4" style="text-align: left;">M/C NAME: <b>{{mcName}}</b></td>
+</tr>
+<tr>
+<td colspan="4" style="text-align: left;">JOB NAME: <b>{{jobName}}</b></td>
+<td colspan="4" style="text-align: left;">BALANCE : <b>{{jobName}}</b></td>
+<td colspan="4" style="text-align: left;">ASSISTANT NAME: <b>{{assistantName}}</b></td>
+<td colspan="4" style="text-align: left;">SHIFT: <b>{{shift}}</b></td>
+</tr>
+<tr>
+<td colspan="4" style="text-align: left;">SLEEVE SIZE: <b>{{sleeveSize}}</b></td>
+<td colspan="4" style="text-align: left;">MC SPEED: <b>{{MCspeed}}</b></td>
+<td colspan="4" style="text-align: left;">PRODUCTION / Hr (KG): <b>{{productionWeight}}</b></td>
+<td colspan="4" style="text-align: left;">DYAN LEVEL: <b>{{dyanLevel}}</b></td>
+</tr>
+
+
+<tr>
+    <td colspan="16" class="section-title">PRODUCTION DETAILS</td>
+</tr>
+
+<tr>
+    <th>PRINTED <br />ROLL NO.</th>
+    <th>PRINTING <br />OP. NAME</th>
+    <th>PRINTED INPUT<br />ROLL IN (KGS)</th>
+    <th>SUP. NAME</th>
+    <th>SUP.<br />ROLL NO.</th>
+    <th>NET WT</th>
+    <th>OUT PUT<br />ROLL NO.</th>
+    <th>OUTPUT ROLL<br />IN WT. (KGS.)</th>
+    <th>OUTPUT<br />ROLL IN (MTRS.)</th>
+    <th>STARTING<br />TIME</th>
+    <th colspan="2">END TIME</th>
+    <th colspan="4">ADH GSM</th>
+</tr>
+
+
+<!-- 
+<tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td colspan="2"></td>
+    <td colspan="4"></td>
+    </tr>
+
+    <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td colspan="2"></td>
+    <td colspan="4"></td>
+    </tr>
+
+    <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td colspan="2"></td>
+    <th colspan="4">POLY WASTAGE DETAILS</th>
+    </tr>
+
+    <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td colspan="2"></td>
+    <td colspan="2">DAMAGE</td>
+    <td colspan="2"></td>
+    </tr>
+
+    <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td colspan="2"></td>
+    <td colspan="2">WRINKE</td>
+    <td colspan="2"></td>
+    </tr>
+
+    <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td colspan="2"></td>
+    <td colspan="2">CORE END</td>
+    <td colspan="2"></td>
+    </tr>
+
+    <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td colspan="2"></td>
+    <td colspan="2"></td>
+    <td colspan="2"></td>
+    </tr>
+
+    <tr>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    <td colspan="2"></td>
+    <td colspan="2"></td>
+    <td colspan="2"></td>
+    </tr> -->
+    
+
+<!-- Iterate through productionDetails -->
+{% for item in productionDetails %}
+    <tr>
+        <td>{{ item.printedRollNo }}</td>
+        <td>{{ item.printingOpName }}</td>
+        <td>{{ item.printedInputRollKgs }}</td>
+        <td>{{ item.supName }}</td>
+        <td>{{ item.supRollNo }}</td>
+        <td>{{ item.netWt }}</td>
+        <td>{{ item.outputRollNo }}</td>
+        <td>{{ item.outputRollWtKgs }}</td>
+        <td>{{ item.outputRollMtrs }}</td>
+        <td>{{ item.startingTime }}</td>
+        <td colspan="2">{{ item.endTime }}</td>
+
+        {% if forloop.counter == 1 or forloop.counter == 2 %}
+            <td colspan="4">{{ item.adhGsm }}</td>
+        {% elif forloop.counter == 3 %}
+            <th colspan="4">POLY WASTAGE DETAILS</th>
+        {% elif forloop.counter == 4 %}
+            <td colspan="2">DAMAGE</td>
+            <td colspan="2">{{polyWastageDetails.damage}}</td>
+        {% elif forloop.counter == 5 %}
+            <td colspan="2">WRINKE</td>
+            <td colspan="2">{{polyWastageDetails.wrinkle}}</td>
+        {% elif forloop.counter == 6 %}
+            <td colspan="2">CORE END</td>
+            <td colspan="2">{{polyWastageDetails.coreEnd}}</td>
+        {% else %}
+            <td colspan="2"></td>
+            <td colspan="2"></td>
+            <td colspan="2"></td>
+        {% endif %}
+    </tr>
+{% endfor %}
+
+
+{% for i in additional_rows %}
+    <tr>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td colspan="2"></td>
+
+        {% if i == 0 %}
+            <td colspan="4"></td>
+        {% elif i == 1 %}
+            <td colspan="4"></td>
+        {% elif i == 2 %}
+            <th colspan="4">POLY WASTAGE DETAILS</th>
+        {% elif i == 3 %}
+            <td colspan="2">DAMAGE</td>
+            <td colspan="2">{{polyWastageDetails.damage}}</td>
+        {% elif i == 4 %}
+            <td colspan="2">WRINKE</td>
+            <td colspan="2">{{polyWastageDetails.wrinkle}}</td>
+        {% elif i == 5 %}
+            <td colspan="2">CORE END</td>
+            <td colspan="2">{{polyWastageDetails.coreEnd}}</td>
+        {% else %}
+            <td colspan="2"></td>
+            <td colspan="2"></td>
+            
+        {% endif %}
+
+        
+    </tr>
+{% endfor %}
+
+
+
+
+  
+
+    <tr>
+    <td colspan="14" style=" background-color: #e57373;
+                color: white;
+                text-align: center;">MATERIAL DETAILS</td>
+    <td rowspan="3" style=" background-color: #e57373;
+                color: white;
+                text-align: center;">BREAKDOWN <br/> DETIALS</td>
+    <td rowspan="3" style=" background-color: #e57373;
+                color: white;
+                text-align: center;">Hrs.</td>
+     
+            </tr>
+     
+            <tr>
+    <th>SL NO.</th>
+    <th colspan="5">RAW MATERIAL</th>
+    <th>SIZE</th>
+    <th>M/C</th>
+    <th>INPUT</th>
+    <th>RETURN</th>
+    <th>USED</th>
+    <th colspan="4">LINE CLEARANCE</th>
+    </tr>
+
+    {% for item in materialDetails %}
+    <tr>
+        <td>{{item.slNo}}</td>
+        <td colspan="5">{{item.rawMaterial.details}}</td>
+        <td>{{item.size}}</td>
+        <td>{{item.mc}}</td>
+        <td>{{item.input}}</td>
+        <td>{{item.return}}</td>
+        <td>{{item.used}}</td>
+
+        {% if forloop.counter == 1 %}
+            <td></td>
+            
+            <td>CLEARED</td>
+            <td>NOT CLEARED</td>
+        {% elif forloop.counter == 2 %}
+            <td>SOLVENT</td>
+            <td>{% if lineClearance.solvent %}
+                ✓
+            {% else %}
+                
+            {% endif %}</td>
+            <td>{% if not lineClearance.solvent %}
+                ✓
+            {% else %}
+                
+            {% endif %}</td>
+            <td>SETTING DETAILS</td>
+            <td>TIME</td>
+        {% elif forloop.counter == 3 %}
+            <td>CYLINDER</td>
+            <td>{% if lineClearance.cylinder %}
+                ✓
+            {% else %}
+                
+            {% endif %}</td>
+            <td>{% if not lineClearance.cylinder %}
+                ✓
+            {% else %}
+                
+            {% endif %}</td>
+            <td>SLEEVE CHANGE</td>
+            <td></td>
+        {% elif forloop.counter == 3 %}
+            <td>RUBBER ROLLERS</td>
+            <td></td>
+            <td></td>
+            <td>CLEANING</td>
+            <td></td>
+        {% endif %}
+    </tr>
+{% endfor %}
+
+{% for i in additional_rows_material %}
+    <tr>
+        <td></td>
+        <td colspan="5"></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+        <td></td>
+
+        {% if i == 0 %}
+        <td>SOLVENT</td>
+        <td>{% if lineClearance.solvent %}
+            ✓
+        {% else %}
+            
+        {% endif %}</td>
+        <td>{% if not lineClearance.solvent %}
+            ✓
+        {% else %}
+            
+        {% endif %}</td>
+        <td>SETTING DETAILS</td>
+        <td>TIME</td>
+        {% elif i == 1 %}
+        <td>CYLINDER</td>
+        <td>{% if lineClearance.cylinder %}
+            ✓
+        {% else %}
+            
+        {% endif %}</td>
+        <td>{% if not lineClearance.cylinder %}
+            ✓
+        {% else %}
+            
+        {% endif %}</td>
+        <td>SLEEVE CHANGE</td>
+        <td></td>
+        {% elif i == 2 %}
+        <td>RUBBER ROLLERS</td>
+        <td>{% if lineClearance.rubberRoller %}
+            ✓
+        {% else %}
+            
+        {% endif %}</td>
+        <td>{% if not lineClearance.rubberRoller %}
+            ✓
+        {% else %}
+            
+        {% endif %}</td>
+        <td>CLEANING</td>
+        <td></td>
+        
+            
+        {% endif %}
+    </tr>
+{% endfor %}
+    
+    <tr>
+    <td></td>
+    <td colspan="2"></td>
+    <td><b>SUPPLIER</b></td>
+    <td><b>GRADE</b></td>
+    <td><b>BATHNO.</b></td>
+    <td><b>RATIO</b></td>
+    <td></td>
+    <td><b>INPUT</b></td>
+    <td></td>
+    <td><b>USED</b></td>
+    <td>DR. BLADE</td>
+    <td>{% if lineClearance.drBlade %}
+        ✓
+    {% else %}
+        
+    {% endif %}</td>
+    <td>{% if not lineClearance.drBlade %}
+        ✓
+    {% else %}
+        
+    {% endif %}</td>
+    <td>TOTAL PRODN MIN/HRS.</td>
+    <td></td>
+    </tr>
+
+{% for item in materialDetails %}
+    <tr>
+    <td></td>
+    {% if forloop.counter == 1 %}
+    <td colspan="2" style="text-align: left;">1.NCO</td>
+    <td>{{item.rawMaterial.nco.supplier}}</td>
+    <td>{{item.rawMaterial.nco.grade}}</td>
+    <td>{{item.rawMaterial.nco.bathNo}}</td>
+    {% elif forloop.counter == 2 %}
+    <td colspan="2" style="text-align: left;">2.OH</td>
+    <td>{{cheating_oh.rawMaterial.oh.supplier}}</td>
+    <td>{{cheating_oh.rawMaterial.oh.grade}}</td>
+    <td>{{cheating_oh.rawMaterial.oh.supplier}}</td>
+    {% elif forloop.counter == 3 %}
+    <td colspan="2" style="text-align: left;"></td>
+    {% elif forloop.counter == 4 %}
+    <td colspan="2" style="text-align: left;"></td>
+    {% endif %}
+    <td></td>
+    <td></td>
+    <td></td>
+    {% if forloop.counter == 1 %}
+    <td></td>
+    <td></td>
+    <td>RAW MATERIAL</td>
+    <td></td>    
+    <td></td>
+    <td>JOB SETTING MIN</td>
+    <td></td>
+    {% elif forloop.counter == 2 %}
+    <td></td>
+    <td></td>
+    <td>M/C.SURROUNDINGS</td>
+    <td></td>
+    <td></td>
+    <td>ROLL CHANGE MIN</td>
+    <td></td>
+    {% elif forloop.counter == 3 %}
+    <td></td>
+    <td></td>
+    <td>WASTE MATL.</td>
+    <td></td>
+    <td></td>
+    <td>NO PLANNING</td>
+    <td></td>
+    {% elif forloop.counter == 4 %}
+    <td>ETHYL Wastage</td>
+    <td></td>
+    <td>PRINTED MATL.</td>
+    <td></td>
+    <td></td>
+    <td>BREAKDOWN MIN'S HRS.</td>
+    <td></td>
+    {% endif %}
+    </tr>
+{% endfor %}
+
+{% for i in additional_rows_material %}
+<tr>
+    <td></td>
+    {% if i == 0 %}
+    <td colspan="2" style="text-align: left;">2.OH</td>
+    <td>{{cheating_oh.rawMaterial.oh.supplier}}</td>
+    <td>{{cheating_oh.rawMaterial.oh.grade}}</td>
+    <td>{{cheating_oh.rawMaterial.oh.bathNo}}</td>
+    {% elif i == 1 %}
+    <td colspan="2" style="text-align: left;"></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    {% elif i == 2 %}
+    <td colspan="2" style="text-align: left;"></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    {% elif i == 3 %}
+    <td colspan="2" style="text-align: left;"></td>
+    <td></td>
+    <td></td>
+    <td></td>
+    {% endif %}
+    <td></td>
+    <td></td>
+    <td></td>
+    {% if i == 0 %}
+    <td></td>
+    <td></td>
+    <td>M/C.SURROUNDINGS</td>
+    <td></td>
+    <td></td>
+    <td>ROLL CHANGE MIN</td>
+    <td></td>
+    {% elif i == 1 %}
+    <td></td>
+    <td></td>
+    <td>WASTE MATL.</td>
+    <td></td>
+    <td></td>
+    <td>NO PLANNING</td>
+    <td></td>
+    {% elif i == 2 %}
+    <td>ETHYL Wastage</td>
+    <td></td>
+    <td>PRINTED MATL.</td>
+    <td></td>
+    <td></td>
+    <td>BREAKDOWN MIN'S HRS.</td>
+    <td></td>
+    {% elif i == 3 %}
+    <td>ETHYL Wastage</td>
+    <td></td>
+    <td>PRINTED MATL.</td>
+    <td></td>
+    <td></td>
+    <td>BREAKDOWN MIN'S HRS.</td>
+    <td></td>
+    {% endif %}
+    </tr>
+{% endfor %}
+
+
+
+
+
+
+
+    <td colspan="2"><b>SCRAP DETAILS</b></td>
+    <td colspan="2"><b>KGS</b></td>
+    <td colspan="6"><b>MACHINE PARAMETER</b></td>
+    <td style="position: relative;" colspan="4" rowspan="6"><span style="position: absolute; left: 0; top: 0; padding-top: 0.5em;">CLEARED THE LINE FOR START UP OF LAMINATION PROCESS</span> <span style="position: absolute; left: 0; bottom: 0; padding-bottom: 0.5em;">CLEARED BY SHIFT SUPERVISOR SIGN.</span></td>
+    <td>CP PAINTINGS</td>
+    <td></td>
+    <tr>
+    <td colspan="2">PLAIN PE WASTAGE</td>
+    <td colspan="2">{{scrapDetails.plainPEWastage}}</td>
+    <td colspan="2">UNWINDER1</td>
+    <td>{{machineParameters.unwinder1}}</td>
+    <td colspan="2">COATING TEMP</td>
+    <td>{{machineParameters.coatingTemp}}</td>
+    <td>TAG REMOVE</td>
+    <td></td>
+    </tr>
+    <tr>
+    <td colspan="2">PRINTED WASTAGE</td>
+    <td colspan="2">{{scrapDetails.printedWastage}}</td>
+    <td colspan="2">UNWINDER2</td>
+    <td>{{machineParameters.unwinder2}}</td>
+    <td colspan="2">NIP TEMPERATURE</td>
+    <td>{{machineParameters.nipTemp}}</td>
+    <td>TOTAL</td>
+    <td></td>
+    </tr>
+    <tr>
+    <td colspan="2">PACKING WASTE</td>
+    <td colspan="2">{{scrapDetails.packingWaste}}</td>
+    <td colspan="2">REWINDER</td>
+    <td>{{machineParameters.rewinder}}</td>
+    <td colspan="2">NCO TEMPERATURE</td>
+    <td>{{machineParameters.ncoTemp}}</td>
+    </tr>
+    <tr>
+    <td colspan="2">LAMINATION WASTE</td>
+    <td colspan="2">{{scrapDetails.laminationWaste}}</td>
+    <td colspan="2">LC1</td>
+    <td>{{machineParameters.lc1}}</td>
+    <td colspan="2">OH TEMPERATURE</td>
+    <td>{{machineParameters.ohTemp}}</td>
+    </tr>
+    <tr>
+    <!-- <td style="border: none;"></td> -->
+    <td colspan="2">TOTAL</td>
+    <td colspan="2"></td>
+    <td colspan="2">NIP PRESSURE</td>
+    <td>{{machineParameters.nipPressure}}</td>
+    <td colspan="2">COATER CURRENT</td>
+    <td>{{machineParameters.coaterCurrent}}</td>
+    </tr>
+    <td style="position: relative; height: 8vh;;" colspan="16"><span style="position: absolute; left: 0; bottom: 0; padding-left: 1em;"><b>OPERATOR SIGNATURE</b></span><span style="position: absolute; right: 0; bottom: 0; padding-right: 1em;"><b>SUPERVISOR SIGNATURE</b></span></td>
+     
+    </tr>
+    </table>
+    </body>
+     
+    </html>

@@ -9,7 +9,7 @@ from .models import WorkOrderHeader
 from rest_framework_simplejwt.tokens import RefreshToken
 from .models import user
 from .serializer import ProductionDetailSerializer
-# Create your views here.
+
 
 class RegistrationView(generics.GenericAPIView):
     serializer_class = RegisterSerializer
@@ -35,88 +35,6 @@ class LoginView(generics.GenericAPIView):
          serializer.is_valid(raise_exception=True)
          return Response(serializer.data, status=status.HTTP_200_OK)
     
-# class submitForm(APIView):
-#     def post(self, request):
-#         body = request.data
-#         return Response(body, status= status.HTTP_200_OK)
-    
-
-
-
-from rest_framework.views import APIView
-from rest_framework.response import Response
-from rest_framework import status
-from django.http import JsonResponse
-
-from .models import (
-    ProductionDetail, NcoAndOh, RawMaterial, MaterialDetail, ScrapDetail,
-    MachineParameter, LineClearance, PolyWastageDetail, WorkOrderHeader
-)
-
-# class WorkOrderCreateView(APIView):
-#     def post(self, request, *args, **kwargs):
-#         data = request.data
-
-        
-#         production_details_data = data.get('productionDetails', [])
-        
-#         for i in production_details_data:
-
-#         ProductionDetailserializer = ProductionDetailSerializer(data= production_details_data)
-        
-        
-#         # Handle RawMaterials and NcoAndOh
-#         raw_materials_data = data.get('materialDetails', [])
-#         for material_data in raw_materials_data:
-#             nco_data = material_data.get('rawMaterial', {}).get('nco', {})
-#             oh_data = material_data.get('rawMaterial', {}).get('oh', {})
-            
-#             nco_instance, _ = NcoAndOh.objects.get_or_create(**nco_data)
-#             oh_instance, _ = NcoAndOh.objects.get_or_create(**oh_data)
-            
-#             raw_material_instance, _ = RawMaterial.objects.get_or_create(
-#                 details=material_data.get('rawMaterial', {}).get('details'),
-#                 nco=nco_instance,
-#                 oh=oh_instance
-#             )
-            
-#             material_instance = MaterialDetail.objects.create(
-#                 rawMaterial=raw_material_instance,
-#                 **{k: v for k, v in material_data.items() if k != 'rawMaterial'}
-#             )
-        
-#         # Handle ScrapDetail
-#         scrap_detail_instance = ScrapDetail.objects.create(**data.get('scrapDetails', {}))
-        
-#         # Handle MachineParameter
-#         machine_parameter_instance = MachineParameter.objects.create(**data.get('machineParameters', {}))
-        
-#         # Handle LineClearance
-#         line_clearance_instance = LineClearance.objects.create(**data.get('lineClearance', {}))
-        
-#         # Handle PolyWastageDetail
-#         poly_wastage_detail_instance = PolyWastageDetail.objects.create(**data.get('polyWastageDetails', {}))
-        
-#         # Handle WorkOrderHeader
-#         work_order_instance = WorkOrderHeader.objects.create(
-#             **{k: v for k, v in data.items() if k not in [
-#                 'productionDetails', 'materialDetails', 'scrapDetails',
-#                 'machineParameters', 'lineClearance', 'polyWastageDetails'
-#             ]}
-#         )
-        
-#         # Set relationships
-#         work_order_instance.ProductionDetails.set(production_details_instances)
-#         work_order_instance.materialDetails.set(MaterialDetail.objects.filter(
-#             slNo__in=[m['slNo'] for m in data.get('materialDetails', [])]
-#         ))
-#         work_order_instance.scrapDetails = scrap_detail_instance
-#         work_order_instance.machineParameters = machine_parameter_instance
-#         work_order_instance.lineClearance = line_clearance_instance
-#         work_order_instance.polyWastageDetails = poly_wastage_detail_instance
-#         work_order_instance.save()
-        
-#         return Response({"message": "Work order created successfully!"}, status=status.HTTP_201_CREATED)
 
 
 from rest_framework.views import APIView
@@ -125,7 +43,7 @@ from rest_framework import status
 from .models import (
     WorkOrderHeader, ProductionDetail, MaterialDetail, ScrapDetail, 
     MachineParameter, LineClearance, PolyWastageDetail, RawMaterial, 
-    NcoAndOh
+    NcoAndOh,breakDownDetail
 )
 from .serializer import WorkOrderHeaderSerializer
 
@@ -134,7 +52,7 @@ class CreateWorkOrderAPIView(APIView):
         data = request.data
 
         try:
-            # Handle ProductionDetails
+            
             production_details_data = data.get('productionDetails', [])
             production_details = []
             for pd_data in production_details_data:
@@ -154,7 +72,7 @@ class CreateWorkOrderAPIView(APIView):
                 )
                 production_details.append(pd)
 
-            # Handle MaterialDetails and RawMaterial
+            
             material_details_data = data.get('materialDetails', [])
             material_details = []
             for md_data in material_details_data:
@@ -205,6 +123,21 @@ class CreateWorkOrderAPIView(APIView):
                 total=scrap_data.get('total')
             )
 
+             # Handle breakDownDetail
+            breakdown_data = data.get('scrapDetails', {})
+            breakdown_detail = breakDownDetail.objects.create(
+                sleeveChange =breakdown_data.get('sleeveChange'), 
+                cleaning= breakdown_data.get('cleaning'), 
+                totalProdnMin=breakdown_data.get('totalProdnMin' ),
+                jobSettingMin=breakdown_data.get('jobSettingMin'),
+                rollChangeMin=breakdown_data.get('rollChangeMin'),
+                noPlanning=breakdown_data.get('noPlanning' ),
+                breakDownMin=breakdown_data.get('breakDownMin' ),
+                powerCut=breakdown_data.get('powerCut' ),
+                tagRemove=breakdown_data.get('tagRemove' ),
+                total=breakdown_data.get('total' ),
+            )
+
             # Handle MachineParameter
             machine_data = data.get('machineParameters', {})
             machine_parameter = MachineParameter.objects.create(
@@ -213,6 +146,7 @@ class CreateWorkOrderAPIView(APIView):
                 rewinder=machine_data.get('rewinder'),
                 coatingTemp=machine_data.get('coatingTemp'),
                 nipTemp=machine_data.get('nipTemp'),
+                lc1 = machine_data.get('lc1'),
                 ncoTemp=machine_data.get('ncoTemp'),
                 ohTemp=machine_data.get('ohTemp'),
                 coaterCurrent=machine_data.get('coaterCurrent'),
@@ -258,6 +192,7 @@ class CreateWorkOrderAPIView(APIView):
                 productionWeight=data.get('productionWeight'),
                 dyanLevel=data.get('dyanLevel'),
                 scrapDetails=scrap_detail,
+                breakDownDetail = breakdown_detail,
                 machineParameters=machine_parameter,
                 lineClearance=line_clearance,
                 polyWastageDetails=poly_wastage_detail
@@ -272,6 +207,9 @@ class CreateWorkOrderAPIView(APIView):
         except Exception as e:
             return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
 
+
+from django.http import HttpResponse
+from django.template import loader
 
 class WorkOrderDetailAPIView(APIView):
     def get(self, request, *args, **kwargs):
@@ -341,6 +279,21 @@ class WorkOrderDetailAPIView(APIView):
                 'laminationWaste': scrap_detail.laminationWaste,
                 'total': scrap_detail.total
             }
+
+            # Prepare breakDownDetail
+            breakdown_detail = work_order.breakDownDetail
+            scrap_data = {
+                'sleeveChange' :breakdown_detail.sleeveChange,
+                'cleaning' :breakdown_detail.cleaning,
+                'totalProdnMin' :breakdown_detail.totalProdnMin,
+                'jobSettingMin':breakdown_detail.jobSettingMin,
+                'rollChangeMin' :breakdown_detail.rollChangeMin,
+                'noPlanning' :breakdown_detail.noPlanning,
+                'breakDownMin' :breakdown_detail.breakDownMin,
+                'powerCut' :breakdown_detail.powerCut,
+                'tagRemove' :breakdown_detail.tagRemove,
+                'total' :breakdown_detail.total,
+            }
             
             # Prepare MachineParameter
             machine_parameter = work_order.machineParameters
@@ -350,6 +303,7 @@ class WorkOrderDetailAPIView(APIView):
                 'rewinder': machine_parameter.rewinder,
                 'coatingTemp': machine_parameter.coatingTemp,
                 'nipTemp': machine_parameter.nipTemp,
+                'lc1': machine_parameter.lc1,
                 'ncoTemp': machine_parameter.ncoTemp,
                 'ohTemp': machine_parameter.ohTemp,
                 'coaterCurrent': machine_parameter.coaterCurrent,
@@ -378,7 +332,7 @@ class WorkOrderDetailAPIView(APIView):
             }
             
             # Prepare WorkOrderHeader response
-            response_data = {
+            context = {
                 'workOrderNo': work_order.workOrderNo,
                 'customer': work_order.customer,
                 'jobName': work_order.jobName,
@@ -402,13 +356,32 @@ class WorkOrderDetailAPIView(APIView):
                 'polyWastageDetails': poly_wastage_data
             }
             
-            return Response(response_data, status=status.HTTP_200_OK)
+            production_count = len(context['productionDetails'])
+            additional_rows = max(9 - production_count, 0)
+            context['additional_rows'] = [i for i in range(additional_rows)]
 
+            material_count = len(context['materialDetails'])
+            additional_rows_material = max(4 - material_count, 0)
+            context['material_Details_count'] = material_count
+            context['additional_rows_material'] = [i for i in range(additional_rows_material)]
+
+            # raw_material_count = len(context['materialDetails'])
+            additional_rows_raw = max(5 - material_count, 0)
+            # # context['material_Details_count'] = material_count
+            context['additional_rows_raw'] = [i for i in range(additional_rows_raw)]
+            context['cheating_oh'] = context['materialDetails'][0]
+            print(context['cheating_oh'])
+
+              
+            template = loader.get_template('app/job_card.html')  
+            html = template.render(context, request)
+            return HttpResponse(html)
+            
         except WorkOrderHeader.DoesNotExist:
-            return Response({'error': 'WorkOrder not found'}, status=status.HTTP_404_NOT_FOUND)
+            return HttpResponse('<h1>WorkOrder not found</h1>', status=404)
         except Exception as e:
-            return Response({'error': str(e)}, status=status.HTTP_400_BAD_REQUEST)
-        
+            return HttpResponse(f'<h1>Error: {str(e)}</h1>', status=400)
+
 
 class workOrderHeadersList(APIView):
     def get(self, request):
