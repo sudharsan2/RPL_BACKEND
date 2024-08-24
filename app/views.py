@@ -585,3 +585,264 @@ class WorkOrderDetailPdfAPIView(APIView):
             return HttpResponse('<h1>WorkOrder not found</h1>', status=404)
         except Exception as e:
             return HttpResponse(f'<h1>Error: {str(e)}</h1>', status=400)
+
+
+import io
+import xlsxwriter
+from django.http import HttpResponse
+from rest_framework.views import APIView
+
+class WorkOrderDetailExcelAPIView(APIView):
+    def get(self, request, *args, **kwargs):
+        work_order_id = kwargs.get('id')
+        
+        try:
+            work_order = WorkOrderHeader.objects.get(id=work_order_id)
+            
+            # Prepare ProductionDetails
+            production_details = ProductionDetail.objects.filter(workorderheader=work_order)
+            production_details_data = [{
+                'printedRollNo': pd.printedRollNo,
+                'printingOpName': pd.printingOpName,
+                'printedInputRollKgs': pd.printedInputRollKgs,
+                'supName': pd.supName,
+                'supRollNo': pd.supRollNo,
+                'netWt': pd.netWt,
+                'outputRollNo': pd.outputRollNo,
+                'outputRollWtKgs': pd.outputRollWtKgs,
+                'outputRollMtrs': pd.outputRollMtrs,
+                'startingTime': pd.startingTime,
+                'endTime': pd.endTime,
+                'adhGsm': pd.adhGsm
+            } for pd in production_details]
+            
+            # Prepare MaterialDetails
+            material_details = MaterialDetail.objects.filter(workorderheader=work_order)
+            material_details_data = []
+            for md in material_details:
+                raw_material = md.rawMaterial
+                nco = raw_material.nco
+                oh = raw_material.oh
+                material_details_data.append({
+                    'slNo': md.slNo,
+                    'rawMaterialDetails': raw_material.details,
+                    'ncoSupplier': nco.supplier if nco else '',
+                    'ncoGrade': nco.grade if nco else '',
+                    'ncoBathNo': nco.bathNo if nco else '',
+                    'ohSupplier': oh.supplier if oh else '',
+                    'ohGrade': oh.grade if oh else '',
+                    'ohBathNo': oh.bathNo if oh else '',
+                    'size': md.size,
+                    'mc': md.mc,
+                    'input': md.input,
+                    'returnMaterial': md.returnMaterial,
+                    'used': md.used,
+                    'lineClearance': md.lineClearance,
+                    'supplier': md.supplier,
+                    'grade': md.grade,
+                    'bathNo': md.bathNo,
+                    'ratio': md.ratio,
+                    'inputQty': md.inputQty
+                })
+            
+            # Prepare ScrapDetail
+            scrap_detail = work_order.scrapDetails
+            scrap_data = {
+                'plainPEWastage': scrap_detail.plainPEWastage,
+                'printedWastage': scrap_detail.printedWastage,
+                'packingWaste': scrap_detail.packingWaste,
+                'laminationWaste': scrap_detail.laminationWaste,
+                'total': scrap_detail.total
+            }
+
+            # Prepare breakDownDetail
+            breakdown_detail = work_order.breakDownDetail
+            breakdown_data = {
+                'sleeveChange': breakdown_detail.sleeveChange,
+                'cleaning': breakdown_detail.cleaning,
+                'totalProdnMin': breakdown_detail.totalProdnMin,
+                'jobSettingMin': breakdown_detail.jobSettingMin,
+                'rollChangeMin': breakdown_detail.rollChangeMin,
+                'noPlanning': breakdown_detail.noPlanning,
+                'breakDownMin': breakdown_detail.breakDownMin,
+                'powerCut': breakdown_detail.powerCut,
+                'tagRemove': breakdown_detail.tagRemove,
+                'total': breakdown_detail.total,
+            }
+            
+            # Prepare MachineParameter
+            machine_parameter = work_order.machineParameters
+            machine_data = {
+                'unwinder1': machine_parameter.unwinder1,
+                'unwinder2': machine_parameter.unwinder2,
+                'rewinder': machine_parameter.rewinder,
+                'coatingTemp': machine_parameter.coatingTemp,
+                'nipTemp': machine_parameter.nipTemp,
+                'lc1': machine_parameter.lc1,
+                'ncoTemp': machine_parameter.ncoTemp,
+                'ohTemp': machine_parameter.ohTemp,
+                'coaterCurrent': machine_parameter.coaterCurrent,
+                'nipPressure': machine_parameter.nipPressure
+            }
+            
+            # Prepare LineClearance
+            line_clearance = work_order.lineClearance
+            line_clearance_data = {
+                'solvent': line_clearance.solvent,
+                'cylinder': line_clearance.cylinder,
+                'rubberRoller': line_clearance.rubberRoller,
+                'drBlade': line_clearance.drBlade,
+                'rawMaterial': line_clearance.rawMaterial,
+                'mcSurroundings': line_clearance.mcSurroundings,
+                'wasteMatl': line_clearance.wasteMatl,
+                'printedMatl': line_clearance.printedMatl
+            }
+            
+            # Prepare PolyWastageDetail
+            poly_wastage_detail = work_order.polyWastageDetails
+            poly_wastage_data = {
+                'damage': poly_wastage_detail.damage,
+                'wrinkle': poly_wastage_detail.wrinkle,
+                'coreEnd': poly_wastage_detail.coreEnd
+            }
+            
+            # Prepare WorkOrderHeader data
+            context = {
+                'workOrderNo': work_order.workOrderNo,
+                'customer': work_order.customer,
+                'jobName': work_order.jobName,
+                'sleeveSize': work_order.sleeveSize,
+                'target': work_order.target,
+                'produced': work_order.produced,
+                'balance': work_order.balance,
+                'operatorName': work_order.operatorName,
+                'assistantName': work_order.assistantName,
+                'date': work_order.date,
+                'mcName': work_order.mcName,
+                'shift': work_order.shift,
+                'MCspeed': work_order.mcSpeed,
+                'productionWeight': work_order.productionWeight,
+                'dyanLevel': work_order.dyanLevel,
+                'productionDetails': production_details_data,
+                'materialDetails': material_details_data,
+                'scrapDetails': scrap_data,
+                'machineParameters': machine_data,
+                'lineClearance': line_clearance_data,
+                'polyWastageDetails': poly_wastage_data
+            }
+            
+            # Create an in-memory output file for the workbook
+            output = io.BytesIO()
+
+            # Create an Excel workbook and sheets
+            workbook = xlsxwriter.Workbook(output, {'in_memory': True})
+            worksheet = workbook.add_worksheet('Work Order Details')
+
+            # Define formats
+            header_format = workbook.add_format({
+                'bold': True,
+                'bg_color': '#D9EAD3',  # Light green shade
+                'border': 1
+            })
+            bold_format = workbook.add_format({
+                'bold': True,
+                'border': 1
+            })
+
+            # Define headers for each section
+            production_headers = ['Printed Roll No', 'Printing Op Name', 'Printed Input Roll Kgs', 'Sup Name', 'Sup Roll No', 'Net Wt', 'Output Roll No', 'Output Roll Wt Kgs', 'Output Roll Mtrs', 'Starting Time', 'End Time', 'Adh Gsm']
+            material_headers = ['Sl No', 'Raw Material Details', 'NCO Supplier', 'NCO Grade', 'NCO Bath No', 'OH Supplier', 'OH Grade', 'OH Bath No', 'Size', 'MC', 'Input', 'Return Material', 'Used', 'Line Clearance', 'Supplier', 'Grade', 'Bath No', 'Ratio', 'Input Qty']
+            scrap_headers = ['Plain PE Wastage', 'Printed Wastage', 'Packing Waste', 'Lamination Waste', 'Total']
+            breakdown_headers = ['Sleeve Change', 'Cleaning', 'Total Prodn Min', 'Job Setting Min', 'Roll Change Min', 'No Planning', 'Break Down Min', 'Power Cut', 'Tag Remove', 'Total']
+            machine_headers = ['Unwinder 1', 'Unwinder 2', 'Rewinder', 'Coating Temp', 'Nip Temp', 'LC1', 'NCO Temp', 'OH Temp', 'Coater Current', 'Nip Pressure']
+            line_clearance_headers = ['Solvent', 'Cylinder', 'Rubber Roller', 'Dr Blade', 'Raw Material', 'MC Surroundings', 'Waste Matl', 'Printed Matl']
+            poly_wastage_headers = ['Damage', 'Wrinkle', 'Core End']
+
+            # Write WorkOrderHeader details
+            row = 0
+            col = 0
+            work_order_headers = [
+                ('Work Order No', context['workOrderNo']),
+                ('Customer', context['customer']),
+                ('Job Name', context['jobName']),
+                ('Sleeve Size', context['sleeveSize']),
+                ('Target', context['target']),
+                ('Produced', context['produced']),
+                ('Balance', context['balance']),
+                ('Operator Name', context['operatorName']),
+                ('Assistant Name', context['assistantName']),
+                ('Date', context['date']),
+                ('MC Name', context['mcName']),
+                ('Shift', context['shift']),
+                ('MC Speed', context['MCspeed']),
+                ('Production Weight', context['productionWeight']),
+                ('Dyan Level', context['dyanLevel'])
+            ]
+
+            # Write WorkOrderHeader details
+            for header, value in work_order_headers:
+                worksheet.write(row, col, header, bold_format)
+                worksheet.write(row, col + 1, value)
+                row += 1
+
+            # Write Production Details
+            row += 1
+            worksheet.write_row(row, col, production_headers, header_format)
+            row += 1
+            for detail in context['productionDetails']:
+                worksheet.write_row(row, col, detail.values())
+                row += 1
+
+            # Write Material Details
+            row += 1
+            worksheet.write_row(row, col, material_headers, header_format)
+            row += 1
+            for detail in context['materialDetails']:
+                worksheet.write_row(row, col, detail.values())
+                row += 1
+
+            # Write Scrap Details
+            row += 1
+            worksheet.write_row(row, col, scrap_headers, header_format)
+            row += 1
+            worksheet.write_row(row, col, scrap_data.values())
+
+            # Write Breakdown Details
+            row += 1
+            worksheet.write_row(row, col, breakdown_headers, header_format)
+            row += 1
+            worksheet.write_row(row, col, breakdown_data.values())
+
+            # Write Machine Parameters
+            row += 1
+            worksheet.write_row(row, col, machine_headers, header_format)
+            row += 1
+            worksheet.write_row(row, col, machine_data.values())
+
+            # Write Line Clearance Details
+            row += 1
+            worksheet.write_row(row, col, line_clearance_headers, header_format)
+            row += 1
+            worksheet.write_row(row, col, line_clearance_data.values())
+
+            # Write Poly Wastage Details
+            row += 1
+            worksheet.write_row(row, col, poly_wastage_headers, header_format)
+            row += 1
+            worksheet.write_row(row, col, poly_wastage_data.values())
+
+            # Close the workbook and prepare the response
+            workbook.close()
+            output.seek(0)
+
+            # Prepare the response with the appropriate headers for Excel download
+            response = HttpResponse(output, content_type='application/vnd.openxmlformats-officedocument.spreadsheetml.sheet')
+            response['Content-Disposition'] = 'attachment; filename="work_order_details.xlsx"'
+            return response
+            
+        except WorkOrderHeader.DoesNotExist:
+            return HttpResponse('<h1>WorkOrder not found</h1>', status=404)
+        except Exception as e:
+            return HttpResponse(f'<h1>Error: {str(e)}</h1>', status=400)
+
+
